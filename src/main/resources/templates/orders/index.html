@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('订单管理')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">ORDERS</span>
+            <h1>订单管理</h1>
+        </div>
+        <a class="btn btn-outline-dark" th:href="@{/products}"><i class="bi bi-grid"></i> 继续逛逛</a>
+    </div>
+
+    <ul class="nav nav-pills order-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#buyer" type="button">我买到的</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#seller" type="button">我卖出的</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4">
+        <div class="tab-pane fade show active" id="buyer">
+            <div class="order-list" th:if="${!buyerOrders.isEmpty()}">
+                <div class="order-item" th:each="order : ${buyerOrders}">
+                    <img th:src="${order.coverUrl}" th:alt="${order.productTitle}">
+                    <div class="order-main">
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                            <a th:href="@{/products/{id}(id=${order.productId})}" th:text="${order.productTitle}">商品</a>
+                            <span class="status-badge" th:classappend="' order-' + ${order.status}" th:text="${orderStatusLabels[order.status]}">状态</span>
+                        </div>
+                        <p>卖家：<span th:text="${order.sellerName}">卖家</span> · <span th:text="${order.orderNo}">订单号</span></p>
+                        <strong th:text="'￥' + ${#numbers.formatDecimal(order.price, 1, 2)}">￥0.00</strong>
+                    </div>
+                    <div class="order-actions">
+                        <form th:if="${order.status == 'CONFIRMED'}" th:action="@{/orders/{id}/status(id=${order.id})}" method="post">
+                            <input type="hidden" name="status" value="COMPLETED">
+                            <button class="btn btn-accent btn-sm" type="submit">确认完成</button>
+                        </form>
+                        <form th:if="${order.status == 'PENDING'}" th:action="@{/orders/{id}/status(id=${order.id})}" method="post">
+                            <input type="hidden" name="status" value="CANCELED">
+                            <button class="btn btn-outline-danger btn-sm" type="submit">取消预订</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="empty-state compact" th:if="${buyerOrders.isEmpty()}">
+                <i class="bi bi-receipt"></i>
+                <h3>还没有买入订单</h3>
+                <p>看到合适的商品，可以先预订再约面交。</p>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="seller">
+            <div class="order-list" th:if="${!sellerOrders.isEmpty()}">
+                <div class="order-item" th:each="order : ${sellerOrders}">
+                    <img th:src="${order.coverUrl}" th:alt="${order.productTitle}">
+                    <div class="order-main">
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                            <a th:href="@{/products/{id}(id=${order.productId})}" th:text="${order.productTitle}">商品</a>
+                            <span class="status-badge" th:classappend="' order-' + ${order.status}" th:text="${orderStatusLabels[order.status]}">状态</span>
+                        </div>
+                        <p>买家：<span th:text="${order.buyerName}">买家</span> · <span th:text="${order.message}">留言</span></p>
+                        <strong th:text="'￥' + ${#numbers.formatDecimal(order.price, 1, 2)}">￥0.00</strong>
+                    </div>
+                    <div class="order-actions">
+                        <form th:if="${order.status == 'PENDING'}" th:action="@{/orders/{id}/status(id=${order.id})}" method="post">
+                            <input type="hidden" name="status" value="CONFIRMED">
+                            <button class="btn btn-accent btn-sm" type="submit">确认预订</button>
+                        </form>
+                        <form th:if="${order.status == 'PENDING'}" th:action="@{/orders/{id}/status(id=${order.id})}" method="post">
+                            <input type="hidden" name="status" value="CANCELED">
+                            <button class="btn btn-outline-danger btn-sm" type="submit">拒绝/取消</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="empty-state compact" th:if="${sellerOrders.isEmpty()}">
+                <i class="bi bi-shop"></i>
+                <h3>还没有卖出订单</h3>
+                <p>完善商品信息和图片，会更容易被预订。</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

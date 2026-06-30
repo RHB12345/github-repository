@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('个人中心')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <section class="profile-hero">
+        <img th:src="${loginUser.avatarUrl}" alt="头像">
+        <div>
+            <span class="eyebrow">PROFILE</span>
+            <h1 th:text="${loginUser.nickname}">用户</h1>
+            <p th:text="${loginUser.bio}">简介</p>
+            <div class="profile-tags">
+                <span><i class="bi bi-person-badge"></i> <span th:text="${loginUser.studentNo}">学号</span></span>
+                <span><i class="bi bi-building"></i> <span th:text="${loginUser.campus}">校区</span></span>
+                <span><i class="bi bi-house"></i> <span th:text="${loginUser.dormitory}">宿舍</span></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="profile-grid">
+        <section class="form-board">
+            <h2>资料设置</h2>
+            <form th:action="@{/user/profile}" method="post" th:object="${profileForm}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">昵称</label>
+                        <input class="form-control" th:field="*{nickname}">
+                        <div class="invalid-hint" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">手机号</label>
+                        <input class="form-control" th:field="*{phone}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">邮箱</label>
+                        <input class="form-control" th:field="*{email}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">宿舍/常用地点</label>
+                        <input class="form-control" th:field="*{dormitory}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">简介</label>
+                        <textarea class="form-control" rows="3" th:field="*{bio}"></textarea>
+                        <div class="invalid-hint" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
+                    </div>
+                </div>
+                <button class="btn btn-accent mt-3" type="submit">保存资料</button>
+            </form>
+        </section>
+
+        <section class="form-board">
+            <h2>修改密码</h2>
+            <form th:action="@{/user/password}" method="post">
+                <label class="form-label">原密码</label>
+                <input class="form-control" type="password" name="oldPassword">
+                <label class="form-label mt-3">新密码</label>
+                <input class="form-control" type="password" name="newPassword">
+                <button class="btn btn-dark mt-3" type="submit">修改密码</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="section-block">
+        <div class="section-heading compact">
+            <div>
+                <span class="eyebrow">MY ITEMS</span>
+                <h2>我发布的商品</h2>
+            </div>
+        </div>
+        <div class="product-grid" th:if="${!myProducts.isEmpty()}">
+            <th:block th:each="item : ${myProducts}">
+                <div th:replace="~{fragments/cards :: productCard(item=${item})}"></div>
+            </th:block>
+        </div>
+        <div class="empty-state compact" th:if="${myProducts.isEmpty()}">
+            <i class="bi bi-plus-square"></i>
+            <h3>还没有发布商品</h3>
+            <p>把闲置物品拍照发布，给它找下一位主人。</p>
+        </div>
+    </section>
+
+    <section class="section-block">
+        <div class="section-heading compact">
+            <div>
+                <span class="eyebrow">FAVORITES</span>
+                <h2>我的收藏</h2>
+            </div>
+        </div>
+        <div class="product-grid" th:if="${!favorites.isEmpty()}">
+            <th:block th:each="item : ${favorites}">
+                <div th:replace="~{fragments/cards :: productCard(item=${item})}"></div>
+            </th:block>
+        </div>
+        <div class="empty-state compact" th:if="${favorites.isEmpty()}">
+            <i class="bi bi-heart"></i>
+            <h3>收藏夹还是空的</h3>
+            <p>看到感兴趣的商品，可以先收藏起来。</p>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('对话')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">DIALOG</span>
+            <h1 th:text="'与 ' + ${peer.nickname} + ' 沟通'">对话</h1>
+        </div>
+        <a class="btn btn-outline-dark" th:href="@{/messages}"><i class="bi bi-arrow-left"></i> 返回消息</a>
+    </div>
+
+    <section class="dialog-board">
+        <div class="chat-stream">
+            <div class="chat-bubble" th:each="message : ${dialog}" th:classappend="${message.senderId == loginUser.id} ? ' mine' : ''">
+                <span th:text="${message.senderName}">发送者</span>
+                <p th:text="${message.content}">内容</p>
+                <small th:text="${#temporals.format(message.createdAt, 'MM-dd HH:mm')}">时间</small>
+            </div>
+            <div class="empty-inline" th:if="${dialog.isEmpty()}">还没有消息，直接发起沟通。</div>
+        </div>
+        <form class="chat-form" th:action="@{/messages/send}" method="post">
+            <input type="hidden" name="receiverId" th:value="${peer.id}">
+            <input type="hidden" name="productId" th:value="${productId}">
+            <textarea class="form-control" name="content" rows="3" placeholder="输入消息"></textarea>
+            <button class="btn btn-accent" type="submit"><i class="bi bi-send"></i> 发送</button>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

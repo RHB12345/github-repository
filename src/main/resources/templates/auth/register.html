@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('实名认证注册')}"></head>
+<body class="auth-page">
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="auth-shell">
+    <section class="auth-panel register-panel">
+        <div class="auth-copy">
+            <span class="eyebrow">VERIFIED CAMPUS</span>
+            <h1>完成学号认证，开始安全交易</h1>
+            <p>同校身份、同校地点、同校信用，让二手交易从陌生平台回到校园现场。</p>
+        </div>
+        <form class="auth-card wide" th:action="@{/register}" method="post" th:object="${registerForm}">
+            <h2>创建账号</h2>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}">错误</div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">学号</label>
+                    <input class="form-control" th:field="*{studentNo}" placeholder="2023123401">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('studentNo')}" th:errors="*{studentNo}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">真实姓名</label>
+                    <input class="form-control" th:field="*{realName}" placeholder="用于校内认证">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('realName')}" th:errors="*{realName}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">昵称</label>
+                    <input class="form-control" th:field="*{nickname}" placeholder="展示给其他同学">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">手机号</label>
+                    <input class="form-control" th:field="*{phone}" placeholder="11 位手机号">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">邮箱</label>
+                    <input class="form-control" th:field="*{email}" placeholder="name@aiit.edu.cn">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">密码</label>
+                    <input class="form-control" type="password" th:field="*{password}" placeholder="至少 6 位">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">校区</label>
+                    <select class="form-select" th:field="*{campus}">
+                        <option value="">请选择</option>
+                        <option th:each="campus : ${campuses}" th:value="${campus}" th:text="${campus}">校区</option>
+                    </select>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('campus')}" th:errors="*{campus}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">宿舍/常用地点</label>
+                    <input class="form-control" th:field="*{dormitory}" placeholder="松苑 3 栋">
+                </div>
+            </div>
+            <button class="btn btn-accent w-100 mt-4" type="submit">完成认证并进入平台</button>
+            <p class="auth-switch">已有账号？<a th:href="@{/login}">去登录</a></p>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

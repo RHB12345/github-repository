@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('登录')}"></head>
+<body class="login-cinematic-page">
+<main class="login-cinematic refined-login">
+    <div class="anime-night-bg"></div>
+    <div class="login-vignette"></div>
+    <div class="quiet-stars"></div>
+
+    <div class="streetlamp" aria-hidden="true">
+        <div class="streetlamp-cap"></div>
+        <div class="streetlamp-bulb"></div>
+        <div class="streetlamp-post"></div>
+        <div class="streetlamp-ground"></div>
+    </div>
+    <div class="warm-beam" aria-hidden="true"></div>
+    <div class="beam-motes" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <a class="login-brand refined-brand" th:href="@{/}">
+        <span class="brand-icon"><i class="bi bi-compass"></i></span>
+        <span>码上启航</span>
+    </a>
+
+    <section class="login-stage">
+        <div class="login-story">
+            <span class="eyebrow">AIIT CAMPUS MARKET</span>
+            <h1>灯亮之后，进入校园好物夜市。</h1>
+            <p>把闲置、教材、数码和宿舍好物聚到同一个安全的校内空间。AI 帮你搜索、估价和判断交易风险。</p>
+            <div class="login-story-tags">
+                <span><i class="bi bi-shield-check"></i> 学号认证</span>
+                <span><i class="bi bi-cpu"></i> AI 推荐</span>
+                <span><i class="bi bi-geo-alt"></i> 同校面交</span>
+            </div>
+        </div>
+
+        <form id="loginForm" class="auth-card refined-login-card" th:action="@{/login}" method="post" th:object="${loginForm}">
+            <input type="hidden" name="redirect" th:value="${redirect}">
+            <div class="login-card-head">
+                <span class="eyebrow">SECURE LOGIN</span>
+                <h2>登录平台</h2>
+                <p>欢迎回到码上启航。</p>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}">账号或密码错误</div>
+
+            <label class="form-label">账号</label>
+            <div class="input-neo refined-input">
+                <i class="bi bi-person-badge"></i>
+                <input id="loginAccount" class="form-control" th:field="*{account}" placeholder="手机号 / 邮箱 / 学号">
+            </div>
+            <div class="invalid-hint" th:if="${#fields.hasErrors('account')}" th:errors="*{account}"></div>
+
+            <label class="form-label mt-3">密码</label>
+            <div class="input-neo refined-input password-input">
+                <i class="bi bi-shield-lock"></i>
+                <input id="loginPassword" class="form-control" type="password" th:field="*{password}" placeholder="请输入密码">
+                <button class="password-toggle" type="button" aria-label="显示或隐藏密码"><i class="bi bi-eye"></i></button>
+            </div>
+            <div class="invalid-hint" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+            <div class="login-options">
+                <label><input id="rememberAccount" type="checkbox"> 记住账号</label>
+                <a th:href="@{/register}">实名认证注册</a>
+            </div>
+
+            <button class="btn btn-accent w-100 mt-3 login-submit" type="submit">
+                <span>进入平台</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+
+            <div class="demo-login-panel">
+                <button type="button" class="demo-fill" data-account="2023123401" data-password="123456">
+                    <i class="bi bi-person"></i> 普通用户
+                </button>
+                <button type="button" class="demo-fill" data-account="2023000001" data-password="123456">
+                    <i class="bi bi-speedometer2"></i> 管理员
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

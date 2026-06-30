@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.title})}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <div class="detail-layout">
+        <section class="gallery-board reveal-card">
+            <div id="productGallery" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item" th:each="image, stat : ${images}" th:classappend="${stat.first} ? ' active' : ''">
+                        <img th:src="${image.url}" th:alt="${product.title}">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productGallery" data-bs-slide="prev" th:if="${images.size() > 1}">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">上一张</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productGallery" data-bs-slide="next" th:if="${images.size() > 1}">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">下一张</span>
+                </button>
+            </div>
+        </section>
+
+        <aside class="detail-info reveal-card">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+                <span class="status-badge" th:classappend="' status-' + ${product.status}" th:text="${productStatusLabels[product.status]}">在售</span>
+                <span class="text-muted small"><i class="bi bi-eye"></i> <span th:text="${product.viewCount}">0</span></span>
+            </div>
+            <h1 th:text="${product.title}">商品标题</h1>
+            <div class="detail-price" th:text="'￥' + ${#numbers.formatDecimal(product.price, 1, 2)}">￥0.00</div>
+            <div class="detail-tags">
+                <span><i class="bi bi-tags"></i> <span th:text="${product.category}">分类</span></span>
+                <span><i class="bi bi-award"></i> <span th:text="${product.conditionLabel}">成色</span></span>
+                <span><i class="bi bi-geo-alt"></i> <span th:text="${product.tradePlace}">地点</span></span>
+            </div>
+            <p class="detail-desc" th:text="${product.description}">描述</p>
+
+            <div class="seller-card">
+                <img th:src="${seller.avatarUrl}" alt="卖家头像">
+                <div>
+                    <strong th:text="${seller.nickname}">卖家</strong>
+                    <p th:text="${seller.campus + ' · ' + seller.dormitory}">校区</p>
+                </div>
+                <a class="btn btn-outline-dark btn-sm ms-auto"
+                   th:if="${loginUser != null and loginUser.id != seller.id}"
+                   th:href="@{/messages/dialog(peerId=${seller.id}, productId=${product.id})}">
+                    <i class="bi bi-chat-dots"></i> 私信
+                </a>
+            </div>
+
+            <div class="action-row">
+                <form th:if="${loginUser != null and loginUser.id != seller.id}" th:action="@{/products/{id}/reserve(id=${product.id})}" method="post" class="flex-grow-1">
+                    <input type="hidden" name="message" value="我想预订这个商品，方便约面交吗？">
+                    <button class="btn btn-accent w-100" type="submit" th:disabled="${product.status != 'ON_SALE'}">
+                        <i class="bi bi-bag-check"></i> 立即预订
+                    </button>
+                </form>
+                <a th:if="${loginUser == null}" class="btn btn-accent flex-grow-1" th:href="@{/login(redirect=${'/products/' + product.id})}">
+                    <i class="bi bi-box-arrow-in-right"></i> 登录后预订
+                </a>
+                <button class="btn btn-outline-danger favorite-btn"
+                        th:if="${loginUser != null}"
+                        th:data-product-id="${product.id}"
+                        th:classappend="${favorited} ? ' active' : ''">
+                    <i class="bi" th:classappend="${favorited} ? ' bi-heart-fill' : ' bi-heart'"></i>
+                    <span class="favorite-count" th:text="${favoriteCount}">0</span>
+                </button>
+            </div>
+
+            <form th:if="${loginUser != null and loginUser.id == seller.id}" class="owner-tools" th:action="@{/products/{id}/status(id=${product.id})}" method="post">
+                <select class="form-select" name="status">
+                    <option th:each="entry : ${productStatusLabels}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${product.status == entry.key}">状态</option>
+                </select>
+                <button class="btn btn-dark" type="submit">更新状态</button>
+            </form>
+        </aside>
+    </div>
+
+    <section class="ai-detail-board reveal-card">
+        <div class="ai-score-ring">
+            <strong th:text="${aiInsight.trustScore}">88</strong>
+            <span>AI 可信度</span>
+        </div>
+        <div class="ai-detail-main">
+            <div class="section-heading compact">
+                <div>
+                    <span class="eyebrow">AI INSIGHT</span>
+                    <h2 th:text="${aiInsight.level}">稳妥</h2>
+                </div>
+            </div>
+            <p th:text="${aiInsight.summary}">AI 洞察摘要</p>
+            <div class="ai-tags">
+                <span th:each="tag : ${aiInsight.tags}" th:text="${tag}">标签</span>
+            </div>
+            <div class="ai-signal"><i class="bi bi-graph-up-arrow"></i> <span th:text="${aiInsight.priceSignal}">价格提示</span></div>
+        </div>
+        <div class="ai-checklist">
+            <h3>交易前确认</h3>
+            <ul>
+                <li th:each="tip : ${aiInsight.tips}" th:text="${tip}">提示</li>
+            </ul>
+            <div th:if="${!aiInsight.alerts.isEmpty()}" class="ai-alerts visible">
+                <div th:each="alert : ${aiInsight.alerts}"><i class="bi bi-exclamation-triangle"></i> <span th:text="${alert}">提醒</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-block" th:if="${!similarProducts.isEmpty()}">
+        <div class="section-heading compact reveal-card">
+            <div>
+                <span class="eyebrow">AI MATCH</span>
+                <h2>相似好物推荐</h2>
+            </div>
+        </div>
+        <div class="product-grid">
+            <th:block th:each="item : ${similarProducts}">
+                <div th:replace="~{fragments/cards :: productCard(item=${item})}"></div>
+            </th:block>
+        </div>
+    </section>
+
+    <section id="comments" class="comments-board reveal-card">
+        <div class="section-heading compact">
+            <div>
+                <span class="eyebrow">COMMENTS</span>
+                <h2>商品留言</h2>
+            </div>
+        </div>
+        <form th:if="${loginUser != null}" th:action="@{/products/{id}/comments(id=${product.id})}" method="post" class="comment-form">
+            <textarea class="form-control" name="content" rows="3" placeholder="询问型号、瑕疵、面交时间等"></textarea>
+            <button class="btn btn-dark" type="submit"><i class="bi bi-send"></i> 发布留言</button>
+        </form>
+        <div th:if="${loginUser == null}" class="login-note">
+            <a th:href="@{/login(redirect=${'/products/' + product.id})}">登录后参与留言</a>
+        </div>
+        <div class="comment-list">
+            <div class="comment-item" th:each="comment : ${comments}">
+                <img th:src="${comment.avatarUrl}" alt="头像">
+                <div>
+                    <div class="comment-head">
+                        <strong th:text="${comment.nickname}">用户</strong>
+                        <span th:text="${#temporals.format(comment.createdAt, 'MM-dd HH:mm')}">时间</span>
+                    </div>
+                    <p th:text="${comment.content}">留言</p>
+                </div>
+            </div>
+            <div class="empty-inline" th:if="${comments.isEmpty()}">还没有留言，做第一个询问的人。</div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

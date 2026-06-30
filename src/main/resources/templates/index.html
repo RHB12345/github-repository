@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('首页')}"></head>
+<body class="premium-home">
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="premium-landing">
+    <section id="home" class="premium-hero">
+        <div class="premium-hero-media" aria-hidden="true">
+            <img src="/images/hero/anime-campus-night.png" alt="">
+            <div class="premium-hero-overlay"></div>
+            <div class="premium-hero-grid"></div>
+            <div class="premium-hero-scan"></div>
+        </div>
+
+        <div class="container premium-hero-content">
+            <div class="premium-hero-copy reveal-card">
+                <div class="premium-badge liquid-glass">
+                    <span>AI 升级</span>
+                    <strong>校园二手交易新体验</strong>
+                </div>
+                <h1 class="premium-heading blur-words">The Campus Market Your Life Deserves</h1>
+                <p>码上启航把学号认证、AI 搜索、智能估价、同校面交和闲置循环做成一个暗色高级的校园交易空间。像浏览作品集一样发现好物，像使用工具一样快速成交。</p>
+                <div class="premium-actions">
+                    <a class="btn liquid-cta" th:href="@{/products/new}">
+                        <span>发布闲置</span>
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                    <a class="btn premium-ghost-btn" th:href="@{/products}">
+                        <i class="bi bi-play-fill"></i>
+                        <span>进入商品广场</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="premium-ai-console liquid-glass reveal-card">
+                <div class="console-head">
+                    <i class="bi bi-cpu"></i>
+                    <div>
+                        <span class="eyebrow">AI SEARCH</span>
+                        <h2>一句话找到校园好物</h2>
+                    </div>
+                </div>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text"><i class="bi bi-stars"></i></span>
+                    <input id="aiSearchInput" class="form-control" placeholder="例如：帮我找便宜的耳麦 / 考研数学资料">
+                    <button id="aiSearchBtn" class="btn liquid-cta" type="button">AI 搜索</button>
+                </div>
+                <div id="aiSearchResult" class="ai-search-result">
+                    <span>AI 会识别预算、品类、热度和关键词，自动跳转到更匹配的商品结果。</span>
+                </div>
+                <div class="premium-category-row premium-hot-search-row" th:if="${!featuredProducts.isEmpty()}">
+                    <span class="premium-hot-label">热门搜索</span>
+                    <a th:each="item : ${featuredProducts}" th:href="@{/products/{id}(id=${item.id})}" th:title="${item.title}">
+                        <i class="bi bi-fire"></i>
+                        <span th:text="${item.title}">热门商品</span>
+                    </a>
+                    <a class="premium-more-chip" th:href="@{/products(sort='hot')}">
+                        <span>更多热门</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="premium-category-row premium-hot-search-row" th:if="${featuredProducts.isEmpty()}">
+                    <span class="premium-hot-label">热门搜索</span>
+                    <a th:each="cat : ${categories}" th:href="@{/products(category=${cat}, sort='hot')}" th:text="${cat}" th:classappend="${selectedCategory == cat} ? ' active' : ''">分类</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container premium-trust-strip reveal-card">
+            <span class="liquid-glass">Built for AIIT students</span>
+            <strong>学号认证</strong>
+            <strong>AI 推荐</strong>
+            <strong>同校面交</strong>
+            <strong>浏览去重</strong>
+            <strong>智能估价</strong>
+        </div>
+    </section>
+
+    <section id="process" class="premium-section premium-start-section">
+        <div class="premium-video-panel" aria-hidden="true"></div>
+        <div class="container premium-centered reveal-card">
+            <span class="premium-badge liquid-glass">How It Works</span>
+            <h2 class="premium-section-title">你发布它。AI 推动它流转。</h2>
+            <p>填写标题、成色、价格和面交地点，AI 会辅助优化描述、判断风险、推荐同类价格。买家用自然语言搜索，系统自动匹配分类和排序。</p>
+            <div class="premium-process-grid">
+                <div class="liquid-glass">
+                    <i class="bi bi-pencil-square"></i>
+                    <h3>发布</h3>
+                    <p>多图上传、成色说明、宿舍楼或校区面交地点。</p>
+                </div>
+                <div class="liquid-glass">
+                    <i class="bi bi-stars"></i>
+                    <h3>匹配</h3>
+                    <p>AI 搜索识别“便宜耳麦”“考研资料”等真实需求。</p>
+                </div>
+                <div class="liquid-glass">
+                    <i class="bi bi-shield-check"></i>
+                    <h3>成交</h3>
+                    <p>学号认证、站内沟通、订单状态和商品状态联动。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="container premium-section">
+        <div class="premium-section-head reveal-card">
+            <span class="premium-badge liquid-glass">Capabilities</span>
+            <h2 class="premium-section-title">Pro features. Campus simple.</h2>
+        </div>
+
+        <div class="premium-chess">
+            <article class="premium-chess-row reveal-card">
+                <div class="premium-chess-copy">
+                    <span class="eyebrow">AI SELLING ASSISTANT</span>
+                    <h3>商品文案不再随便写。</h3>
+                    <p>发布页的 AI 助手会根据分类、成色、价格和描述，生成更完整的标题、亮点、价格区间和交易风险提示。</p>
+                    <a class="btn liquid-cta" th:href="@{/products/new}">试试发布 <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+                <div class="premium-feature-visual liquid-glass">
+                    <div class="feature-terminal">
+                        <span>AI SCORE</span>
+                        <strong>92</strong>
+                        <p>标题清晰，价格合理，建议补充配件与面交时间。</p>
+                    </div>
+                    <div class="feature-bars">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="premium-chess-row reverse reveal-card">
+                <div class="premium-chess-copy">
+                    <span class="eyebrow">SEMANTIC SEARCH</span>
+                    <h3>买家说人话，系统懂需求。</h3>
+                    <p>“耳麦”会扩展到耳机、蓝牙、降噪；“资料”会扩展到教材、真题、讲义。搜索不再只靠一个死板关键词。</p>
+                    <a class="btn liquid-cta" th:href="@{/products(keyword='耳麦', sort='priceAsc')}">搜索耳麦 <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+                <div class="premium-feature-visual liquid-glass">
+                    <div class="semantic-map">
+                        <span>耳麦</span>
+                        <span>耳机</span>
+                        <span>蓝牙</span>
+                        <span>降噪</span>
+                        <span>数码电子</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section id="work" class="container premium-section">
+        <div class="premium-section-head reveal-card">
+            <span class="premium-badge liquid-glass">Featured Loop</span>
+            <h2 class="premium-section-title">像作品集一样浏览校园好物。</h2>
+            <a class="btn premium-light-btn" th:href="@{/products(sort='hot')}">查看热门 <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div id="featuredCarousel" class="carousel slide featured-carousel premium-carousel reveal-card" data-bs-ride="carousel" data-bs-interval="3400" th:if="${!featuredProducts.isEmpty()}">
+            <div class="carousel-indicators">
+                <button th:each="item, stat : ${featuredProducts}" type="button" data-bs-target="#featuredCarousel"
+                        th:data-bs-slide-to="${stat.index}" th:classappend="${stat.first} ? ' active' : ''"
+                        th:aria-current="${stat.first} ? 'true' : 'false'" th:aria-label="'第 ' + ${stat.count} + ' 件商品'"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item" th:each="item, stat : ${featuredProducts}" th:classappend="${stat.first} ? ' active' : ''">
+                    <div class="featured-slide skeleton-media">
+                        <img class="lazy-img" th:src="${item.coverUrl}" th:alt="${item.title}" loading="lazy" decoding="async">
+                        <div class="featured-slide-copy">
+                            <span class="status-badge" th:classappend="' status-' + ${item.status}" th:text="${productStatusLabels[item.status]}">在售</span>
+                            <h3 th:text="${item.title}">商品标题</h3>
+                            <p th:text="${item.description}">商品描述</p>
+                            <div class="featured-meta">
+                                <strong th:text="'￥' + ${#numbers.formatDecimal(item.price, 1, 2)}">￥0.00</strong>
+                                <span><i class="bi bi-geo-alt"></i> <span th:text="${item.tradePlace}">地点</span></span>
+                                <span><i class="bi bi-heart"></i> <span th:text="${item.favoriteCount}">0</span></span>
+                            </div>
+                            <a class="btn liquid-cta" th:href="@{/products/{id}(id=${item.id})}">查看详情 <i class="bi bi-arrow-up-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">上一件</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">下一件</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="container premium-section">
+        <div class="premium-section-head reveal-card">
+            <span class="premium-badge liquid-glass">Why Us</span>
+            <h2 class="premium-section-title">The difference is trust.</h2>
+        </div>
+        <div class="premium-feature-grid">
+            <article class="liquid-glass reveal-card">
+                <span class="feature-icon liquid-glass-strong"><i class="bi bi-lightning-charge"></i></span>
+                <h3>快速成交</h3>
+                <p>同校同城景别，减少物流成本，信息更新更及时。</p>
+            </article>
+            <article class="liquid-glass reveal-card">
+                <span class="feature-icon liquid-glass-strong"><i class="bi bi-palette"></i></span>
+                <h3>精致展示</h3>
+                <p>轮播、卡片动效、骨架屏和懒加载，让商品更有质感。</p>
+            </article>
+            <article class="liquid-glass reveal-card">
+                <span class="feature-icon liquid-glass-strong"><i class="bi bi-graph-up-arrow"></i></span>
+                <h3>数据驱动</h3>
+                <p>后台统计分类热度、订单状态和平台交易表现。</p>
+            </article>
+            <article class="liquid-glass reveal-card">
+                <span class="feature-icon liquid-glass-strong"><i class="bi bi-shield-lock"></i></span>
+                <h3>安全默认</h3>
+                <p>Session 鉴权、接口限流、日志追踪和学号认证结合。</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="premium-section premium-stats-section">
+        <div class="premium-video-panel desaturated" aria-hidden="true"></div>
+        <div class="container">
+            <div class="premium-stats-card liquid-glass reveal-card">
+                <div>
+                    <strong class="count-up" th:data-count="${stats.productCount}" th:text="${stats.productCount}">0</strong>
+                    <span>在库商品</span>
+                </div>
+                <div>
+                    <strong class="count-up" th:data-count="${stats.userCount}" th:text="${stats.userCount}">0</strong>
+                    <span>认证同学</span>
+                </div>
+                <div>
+                    <strong class="count-up" th:data-count="${stats.orderCount}" th:text="${stats.orderCount}">0</strong>
+                    <span>订单记录</span>
+                </div>
+                <div>
+                    <strong class="count-up" th:data-count="${stats.turnoverCount}" th:text="${stats.turnoverCount}">0</strong>
+                    <span>完成交易</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container premium-section">
+        <div class="premium-section-head reveal-card">
+            <span class="premium-badge liquid-glass">AI Picks</span>
+            <h2 class="premium-section-title">智能推荐，直接可买。</h2>
+            <div class="premium-head-actions">
+                <a class="btn premium-light-btn" th:href="@{/products}">全部商品 <i class="bi bi-grid"></i></a>
+                <a class="btn liquid-cta" th:href="@{/products/new}">发布闲置 <i class="bi bi-plus-square"></i></a>
+            </div>
+        </div>
+
+        <div class="product-grid premium-product-grid" th:if="${!products.records.isEmpty()}">
+            <th:block th:each="item : ${products.records}">
+                <div th:replace="~{fragments/cards :: productCard(item=${item})}"></div>
+            </th:block>
+        </div>
+        <div class="empty-state premium-empty liquid-glass" th:if="${products.records.isEmpty()}">
+            <i class="bi bi-search"></i>
+            <h3>没有找到匹配商品</h3>
+            <p>换个关键词试试，或者发布第一件同类闲置。</p>
+        </div>
+    </section>
+
+    <section class="container premium-section">
+        <div class="premium-section-head reveal-card">
+            <span class="premium-badge liquid-glass">What They Say</span>
+            <h2 class="premium-section-title">来自校园交易现场的反馈。</h2>
+        </div>
+        <div class="premium-testimonials">
+            <article class="liquid-glass reveal-card">
+                <p>“把考研资料挂上去之后，AI 优化的标题比我自己写的清楚多了，当天就有人私信。”</p>
+                <strong>林同学</strong>
+                <span>计算机学院 · 卖家</span>
+            </article>
+            <article class="liquid-glass reveal-card">
+                <p>“我直接搜‘便宜耳麦’，系统把耳机和蓝牙都匹配出来了，比翻群消息省太多时间。”</p>
+                <strong>周同学</strong>
+                <span>大一新生 · 买家</span>
+            </article>
+            <article class="liquid-glass reveal-card">
+                <p>“后台统计能看到分类热度，演示的时候很有说服力，不只是一个普通列表网站。”</p>
+                <strong>管理员</strong>
+                <span>平台运营视角</span>
+            </article>
+        </div>
+    </section>
+
+    <section class="premium-section premium-cta-section">
+        <div class="premium-video-panel warm" aria-hidden="true"></div>
+        <div class="container premium-centered reveal-card">
+            <span class="premium-badge liquid-glass">Ready to Launch</span>
+            <h2 class="premium-section-title">下一件校园好物，从这里启航。</h2>
+            <p>发布闲置、寻找教材、预约面交、查看后台数据，都可以从同一个平台完成。</p>
+            <div class="premium-actions justify-content-center">
+                <a class="btn liquid-cta" th:href="@{/products/new}">立即发布 <i class="bi bi-arrow-up-right"></i></a>
+                <a class="btn premium-light-btn" th:href="@{/login}">登录平台</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

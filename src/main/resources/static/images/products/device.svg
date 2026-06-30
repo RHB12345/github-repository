@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="数码电子">
+  <rect width="800" height="600" fill="#eef2fb"/>
+  <rect x="142" y="132" width="420" height="286" rx="24" fill="#18202f"/>
+  <rect x="172" y="162" width="360" height="210" rx="12" fill="#17a398"/>
+  <rect x="232" y="438" width="260" height="28" rx="14" fill="#2f3a5f"/>
+  <rect x="262" y="480" width="200" height="24" rx="12" fill="#ccd3df"/>
+  <circle cx="604" cy="316" r="72" fill="#ffbf3f"/>
+  <rect x="574" y="258" width="60" height="116" rx="14" fill="#ffffff"/>
+  <circle cx="604" cy="360" r="5" fill="#18202f"/>
+</svg>

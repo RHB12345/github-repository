@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('后台管理')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell admin-console">
+    <div class="section-heading admin-hero">
+        <div>
+            <span class="eyebrow">ADMIN COMMAND CENTER</span>
+            <h1>运营后台</h1>
+            <p>集中查看平台商品、用户、订单、消息和交易热度，快速发现需要处理的运营事项。</p>
+        </div>
+        <div class="admin-hero-actions">
+            <a class="btn btn-accent" th:href="@{/products/new}"><i class="bi bi-plus-square"></i> 发布测试商品</a>
+            <a class="btn btn-outline-dark" th:href="@{/products}"><i class="bi bi-grid"></i> 查看前台</a>
+        </div>
+    </div>
+
+    <section class="admin-metrics admin-metrics-expanded">
+        <div>
+            <span><i class="bi bi-people"></i> 认证用户</span>
+            <strong class="count-up" th:data-count="${stats.userCount}" th:text="${stats.userCount}">0</strong>
+            <small>校园身份池</small>
+        </div>
+        <div>
+            <span><i class="bi bi-box-seam"></i> 商品总数</span>
+            <strong class="count-up" th:data-count="${stats.productCount}" th:text="${stats.productCount}">0</strong>
+            <small>含在售/预订/已售</small>
+        </div>
+        <div>
+            <span><i class="bi bi-receipt"></i> 订单总数</span>
+            <strong class="count-up" th:data-count="${stats.orderCount}" th:text="${stats.orderCount}">0</strong>
+            <small>全平台交易流</small>
+        </div>
+        <div>
+            <span><i class="bi bi-check2-circle"></i> 完成交易</span>
+            <strong class="count-up" th:data-count="${stats.turnoverCount}" th:text="${stats.turnoverCount}">0</strong>
+            <small>已完成闭环</small>
+        </div>
+    </section>
+
+    <section class="admin-alert-grid">
+        <article class="admin-alert-card reveal-card">
+            <i class="bi bi-shield-check"></i>
+            <div>
+                <h2>交易安全建议</h2>
+                <p>重点关注“先款、定金、外部链接”等留言关键词。建议引导用户在校内公共区域面交。</p>
+            </div>
+        </article>
+        <article class="admin-alert-card reveal-card">
+            <i class="bi bi-stars"></i>
+            <div>
+                <h2>AI 运营提示</h2>
+                <p>高浏览低收藏商品可以优化标题、图片和价格；教材资料与数码电子适合首页推荐。</p>
+            </div>
+        </article>
+        <article class="admin-alert-card reveal-card">
+            <i class="bi bi-lightning-charge"></i>
+            <div>
+                <h2>客服工作台</h2>
+                <p>右下角 AI 客服支持拖拽和大屏模式，可直接处理发布、预订、后台和搜索问题。</p>
+            </div>
+        </article>
+    </section>
+
+    <section class="chart-grid admin-chart-grid">
+        <div class="chart-card reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">CATEGORY</span>
+                    <h2>分类分布</h2>
+                </div>
+            </div>
+            <div id="categoryChart" class="chart-box"></div>
+        </div>
+        <div class="chart-card reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">ORDER</span>
+                    <h2>订单状态</h2>
+                </div>
+            </div>
+            <div id="orderChart" class="chart-box"></div>
+        </div>
+        <div class="chart-card reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">PRODUCT STATUS</span>
+                    <h2>商品状态</h2>
+                </div>
+            </div>
+            <div id="productStatusChart" class="chart-box"></div>
+        </div>
+        <div class="chart-card reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">CAMPUS</span>
+                    <h2>校区分布</h2>
+                </div>
+            </div>
+            <div id="campusChart" class="chart-box"></div>
+        </div>
+    </section>
+
+    <section class="admin-grid-two">
+        <div class="admin-panel reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">USERS</span>
+                    <h2>最新用户</h2>
+                </div>
+            </div>
+            <div class="admin-user-list">
+                <div class="admin-user-row" th:each="user : ${latestUsers}">
+                    <img th:src="${user.avatarUrl}" alt="头像">
+                    <div>
+                        <strong th:text="${user.nickname}">用户</strong>
+                        <span th:text="${user.studentNo + ' · ' + user.campus + ' · ' + user.dormitory}">学号</span>
+                    </div>
+                    <small th:text="${user.role}">USER</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-panel reveal-card">
+            <div class="admin-card-head">
+                <div>
+                    <span class="eyebrow">RECENT ORDERS</span>
+                    <h2>最新订单</h2>
+                </div>
+            </div>
+            <div class="admin-order-list">
+                <div class="admin-order-row" th:each="order : ${latestOrders}">
+                    <img th:src="${order.coverUrl}" alt="商品图">
+                    <div>
+                        <a th:href="@{/products/{id}(id=${order.productId})}" th:text="${order.productTitle}">商品</a>
+                        <span th:text="${order.buyerName + ' → ' + order.sellerName}">买卖双方</span>
+                    </div>
+                    <span class="status-badge" th:classappend="' order-' + ${order.status}" th:text="${orderStatusLabels[order.status]}">状态</span>
+                </div>
+                <div class="empty-inline" th:if="${latestOrders.isEmpty()}">暂无订单记录。</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="adminProductManagement" class="section-block admin-panel reveal-card" th:fragment="productManagement">
+        <div class="admin-card-head">
+            <div>
+                <span class="eyebrow">AUDIT</span>
+                <h2>商品管理</h2>
+            </div>
+            <span class="admin-panel-note">支持关键词、分类、状态筛选</span>
+        </div>
+        <form class="filter-bar admin-filter" th:action="@{/admin}" method="get" data-admin-products-filter>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input class="form-control" name="keyword" th:value="${keyword}" placeholder="搜索商品标题、描述或分类">
+            </div>
+            <select class="form-select" name="category">
+                <option value="">全部分类</option>
+                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}" th:selected="${selectedCategory == cat}">分类</option>
+            </select>
+            <select class="form-select" name="status">
+                <option value="">全部状态</option>
+                <option th:each="entry : ${productStatusLabels}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${selectedStatus == entry.key}">状态</option>
+            </select>
+            <select class="form-select" name="sort">
+                <option value="latest" th:selected="${sort == 'latest'}">最新发布</option>
+                <option value="hot" th:selected="${sort == 'hot'}">热度优先</option>
+                <option value="priceAsc" th:selected="${sort == 'priceAsc'}">价格从低到高</option>
+                <option value="priceDesc" th:selected="${sort == 'priceDesc'}">价格从高到低</option>
+            </select>
+            <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> 筛选</button>
+        </form>
+        <div class="table-responsive table-board mt-3 admin-table">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>商品</th>
+                    <th>分类</th>
+                    <th>价格</th>
+                    <th>状态</th>
+                    <th>热度</th>
+                    <th>收藏</th>
+                    <th>发布时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${products.records}">
+                    <td>
+                        <div class="admin-product-cell">
+                            <img th:src="${item.coverUrl}" alt="商品图">
+                            <div>
+                                <a th:href="@{/products/{id}(id=${item.id})}" th:text="${item.title}">商品</a>
+                                <span th:text="${item.sellerNickname + ' · ' + item.tradePlace}">卖家</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${item.category}">分类</td>
+                    <td th:text="'￥' + ${#numbers.formatDecimal(item.price, 1, 2)}">￥0.00</td>
+                    <td><span class="status-badge" th:classappend="' status-' + ${item.status}" th:text="${productStatusLabels[item.status]}">状态</span></td>
+                    <td th:text="${item.viewCount}">0</td>
+                    <td th:text="${item.favoriteCount}">0</td>
+                    <td th:text="${#temporals.format(item.createdAt, 'MM-dd HH:mm')}">时间</td>
+                    <td><a class="btn btn-outline-dark btn-sm" th:href="@{/products/{id}(id=${item.id})}">查看</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="empty-inline" th:if="${products.records.isEmpty()}">没有匹配的商品。</div>
+        </div>
+        <nav class="pager" th:if="${products.totalPages > 1}">
+            <a class="btn btn-outline-dark" th:classappend="${!products.hasPrevious()} ? ' disabled' : ''"
+               th:href="@{/admin(page=${products.page - 1}, keyword=${keyword}, category=${selectedCategory}, status=${selectedStatus}, sort=${sort})}">
+                <i class="bi bi-arrow-left"></i> 上一页
+            </a>
+            <span th:text="${products.page} + ' / ' + ${products.totalPages}">1 / 1</span>
+            <a class="btn btn-outline-dark" th:classappend="${!products.hasNext()} ? ' disabled' : ''"
+               th:href="@{/admin(page=${products.page + 1}, keyword=${keyword}, category=${selectedCategory}, status=${selectedStatus}, sort=${sort})}">
+                下一页 <i class="bi bi-arrow-right"></i>
+            </a>
+        </nav>
+    </section>
+
+    <section class="admin-panel reveal-card">
+        <div class="admin-card-head">
+            <div>
+                <span class="eyebrow">MESSAGES</span>
+                <h2>最近沟通</h2>
+            </div>
+        </div>
+        <div class="admin-message-list">
+            <div class="admin-message-row" th:each="message : ${latestMessages}">
+                <div class="message-icon"><i class="bi bi-chat-dots"></i></div>
+                <div>
+                    <strong th:text="${message.senderName + ' → ' + message.receiverName}">沟通双方</strong>
+                    <p th:text="${message.content}">消息内容</p>
+                    <span th:text="${message.productTitle != null ? message.productTitle : '无关联商品'}">商品</span>
+                </div>
+                <small th:text="${#temporals.format(message.createdAt, 'MM-dd HH:mm')}">时间</small>
+            </div>
+            <div class="empty-inline" th:if="${latestMessages.isEmpty()}">暂无沟通记录。</div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script th:inline="javascript">
+    window.__categoryStats = /*[[${categoryStats}]]*/ [];
+    window.__orderStats = /*[[${orderStats}]]*/ [];
+    window.__productStatusStats = /*[[${productStatusStats}]]*/ [];
+    window.__campusStats = /*[[${campusStats}]]*/ [];
+</script>
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

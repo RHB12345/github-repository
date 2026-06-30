@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('发布商品')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <div class="section-heading reveal-card">
+        <div>
+            <span class="eyebrow">SELL WITH AI</span>
+            <h1>发布闲置商品</h1>
+        </div>
+        <a class="btn btn-outline-dark" th:href="@{/products}"><i class="bi bi-arrow-left"></i> 返回广场</a>
+    </div>
+
+    <form id="productForm" class="publish-layout" th:action="@{/products/publish}" method="post" enctype="multipart/form-data" th:object="${productForm}">
+        <div class="form-board reveal-card">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}">错误</div>
+            <div class="ai-toolbar">
+                <button class="btn btn-dark" type="button" id="aiPolishBtn">
+                    <i class="bi bi-stars"></i> AI 生成文案与估价
+                </button>
+                <button class="btn btn-outline-dark" type="button" id="aiApplyBtn" disabled>
+                    <i class="bi bi-magic"></i> 应用建议
+                </button>
+                <span id="aiStatus" class="ai-status">先填写标题、分类或描述，再让 AI 优化。</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">商品标题</label>
+                    <input id="title" class="form-control form-control-lg" th:field="*{title}" placeholder="例如：Java 编程思想 + Spring Boot 实战套装">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">分类</label>
+                    <select id="category" class="form-select" th:field="*{category}">
+                        <option value="">请选择</option>
+                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}">分类</option>
+                    </select>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">价格</label>
+                    <div class="input-group">
+                        <span class="input-group-text">￥</span>
+                        <input id="price" class="form-control" type="number" step="0.01" min="0" th:field="*{price}">
+                    </div>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">成色</label>
+                    <select id="conditionLabel" class="form-select" th:field="*{conditionLabel}">
+                        <option value="">请选择</option>
+                        <option th:each="condition : ${conditions}" th:value="${condition}" th:text="${condition}">成色</option>
+                    </select>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('conditionLabel')}" th:errors="*{conditionLabel}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">校区</label>
+                    <select id="campusArea" class="form-select" th:field="*{campusArea}">
+                        <option value="">请选择</option>
+                        <option th:each="campus : ${campuses}" th:value="${campus}" th:text="${campus}">校区</option>
+                    </select>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('campusArea')}" th:errors="*{campusArea}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">面交地点</label>
+                    <input id="tradePlace" class="form-control" th:field="*{tradePlace}" placeholder="例如：图书馆一楼 / 松苑 3 栋楼下">
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('tradePlace')}" th:errors="*{tradePlace}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">商品描述</label>
+                    <textarea id="description" class="form-control" rows="8" th:field="*{description}" placeholder="写清楚使用时间、瑕疵、配件、是否可小刀等信息"></textarea>
+                    <div class="invalid-hint" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">商品图片</label>
+                    <input class="form-control" type="file" name="images" multiple accept="image/*">
+                </div>
+            </div>
+            <button class="btn btn-accent btn-lg mt-4" type="submit"><i class="bi bi-send"></i> 发布商品</button>
+        </div>
+
+        <aside class="publish-side">
+            <div class="ai-panel reveal-card" id="aiPanel">
+                <div class="ai-panel-head">
+                    <i class="bi bi-cpu"></i>
+                    <div>
+                        <span class="eyebrow">AI ASSISTANT</span>
+                        <h2>智能发布评分</h2>
+                    </div>
+                    <strong id="aiScore">--</strong>
+                </div>
+                <div class="ai-price">
+                    <span>建议价</span>
+                    <strong id="aiPrice">等待分析</strong>
+                    <small id="aiRange">填写信息后生成区间</small>
+                </div>
+                <div class="ai-block">
+                    <h3>标题建议</h3>
+                    <p id="aiTitle">AI 会根据分类、成色和关键词生成更适合搜索的标题。</p>
+                </div>
+                <div class="ai-block">
+                    <h3>描述建议</h3>
+                    <p id="aiDescription">生成后的描述会覆盖商品情况、亮点、成色说明和面交方式。</p>
+                </div>
+                <div class="ai-tags" id="aiTags"></div>
+                <div class="ai-alerts" id="aiAlerts"></div>
+            </div>
+
+            <div class="side-card reveal-card">
+                <i class="bi bi-stars"></i>
+                <h2>高质量发布建议</h2>
+                <p>标题写清型号和核心卖点，图片展示真实状态，描述里说明配件、瑕疵和面交时间。</p>
+            </div>
+            <div class="side-card reveal-card">
+                <i class="bi bi-shield-check"></i>
+                <h2>交易安全</h2>
+                <p>优先选择校内公共区域面交，确认商品无误后再完成订单。</p>
+            </div>
+        </aside>
+    </form>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

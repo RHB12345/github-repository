@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="教材资料">
+  <rect width="800" height="600" fill="#e8f5f3"/>
+  <rect x="170" y="128" width="300" height="360" rx="18" fill="#17a398"/>
+  <rect x="330" y="108" width="300" height="360" rx="18" fill="#2f3a5f"/>
+  <rect x="204" y="180" width="220" height="18" rx="9" fill="#fff"/>
+  <rect x="204" y="222" width="170" height="14" rx="7" fill="#ccefeb"/>
+  <rect x="366" y="164" width="210" height="18" rx="9" fill="#fff"/>
+  <rect x="366" y="206" width="160" height="14" rx="7" fill="#cad0df"/>
+  <circle cx="604" cy="416" r="56" fill="#ffbf3f"/>
+  <path d="M588 414l14 14 28-34" fill="none" stroke="#18202f" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

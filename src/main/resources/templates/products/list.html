@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('商品广场')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<main class="container page-shell">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">MARKET</span>
+            <h1>商品广场</h1>
+        </div>
+        <a class="btn btn-accent" th:href="@{/products/new}"><i class="bi bi-plus-square"></i> 发布商品</a>
+    </div>
+
+    <form class="filter-bar" th:action="@{/products}" method="get">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input class="form-control" name="keyword" th:value="${keyword}" placeholder="搜索商品标题或描述">
+        </div>
+        <select class="form-select" name="category">
+            <option value="">全部分类</option>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}" th:selected="${selectedCategory == cat}">分类</option>
+        </select>
+        <select class="form-select" name="status">
+            <option value="">默认只看在售</option>
+            <option th:each="entry : ${productStatusLabels}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${selectedStatus == entry.key}">状态</option>
+        </select>
+        <select class="form-select" name="sort">
+            <option value="latest" th:selected="${sort == 'latest'}">最新发布</option>
+            <option value="hot" th:selected="${sort == 'hot'}">热度优先</option>
+            <option value="priceAsc" th:selected="${sort == 'priceAsc'}">价格从低到高</option>
+            <option value="priceDesc" th:selected="${sort == 'priceDesc'}">价格从高到低</option>
+        </select>
+        <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> 筛选</button>
+    </form>
+
+    <div class="product-grid mt-4" th:if="${!products.records.isEmpty()}">
+        <th:block th:each="item : ${products.records}">
+            <div th:replace="~{fragments/cards :: productCard(item=${item})}"></div>
+        </th:block>
+    </div>
+    <div class="empty-state" th:if="${products.records.isEmpty()}">
+        <i class="bi bi-bag-x"></i>
+        <h3>还没有匹配商品</h3>
+        <p>调整筛选条件，或者成为第一个发布的人。</p>
+    </div>
+
+    <nav class="pager" th:if="${products.totalPages > 1}">
+        <a class="btn btn-outline-dark" th:classappend="${!products.hasPrevious()} ? ' disabled' : ''"
+           th:href="@{/products(page=${products.page - 1}, keyword=${keyword}, category=${selectedCategory}, status=${selectedStatus}, sort=${sort})}">
+            <i class="bi bi-arrow-left"></i> 上一页
+        </a>
+        <span th:text="${products.page} + ' / ' + ${products.totalPages}">1 / 1</span>
+        <a class="btn btn-outline-dark" th:classappend="${!products.hasNext()} ? ' disabled' : ''"
+           th:href="@{/products(page=${products.page + 1}, keyword=${keyword}, category=${selectedCategory}, status=${selectedStatus}, sort=${sort})}">
+            下一页 <i class="bi bi-arrow-right"></i>
+        </a>
+    </nav>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

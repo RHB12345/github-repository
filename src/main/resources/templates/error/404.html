@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('页面提示')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container page-shell">
+    <div class="empty-state">
+        <i class="bi bi-exclamation-circle"></i>
+        <h1 th:text="${message != null ? message : '页面不存在'}">页面不存在</h1>
+        <p>你访问的内容暂时不可用，返回首页继续浏览。</p>
+        <a class="btn btn-accent" th:href="@{/}">回到首页</a>
+    </div>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

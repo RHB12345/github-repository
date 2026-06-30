@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="运动户外">
+  <rect width="800" height="600" fill="#edf8ec"/>
+  <circle cx="270" cy="390" r="86" fill="none" stroke="#18202f" stroke-width="20"/>
+  <circle cx="548" cy="390" r="86" fill="none" stroke="#18202f" stroke-width="20"/>
+  <path d="M270 390l92-138h84l102 138M362 252l44 138H270m136 0l78-138" fill="none" stroke="#17a398" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M430 252h68m-160 0h-50" stroke="#2f3a5f" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="548" cy="390" r="22" fill="#ffbf3f"/>
+  <circle cx="270" cy="390" r="22" fill="#ffbf3f"/>
+</svg>

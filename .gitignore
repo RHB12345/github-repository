@@ -1,0 +1,8 @@
+target/
+uploads/
+tools/apache-maven-*/
+tools/*.zip
+*.log
+.idea/
+.vs/
+*.iml

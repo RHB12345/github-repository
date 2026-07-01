@@ -35,5 +35,16 @@ if not exist "%JAR_PATH%" (
   )
 )
 
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; try { $jar = [System.IO.Compression.ZipFile]::OpenRead('%JAR_PATH%'); try { if ($jar.Entries | Where-Object { $_.FullName -like 'BOOT-INF/*' } | Select-Object -First 1) { exit 0 } else { exit 1 } } finally { $jar.Dispose() } } catch { exit 1 }"
+if errorlevel 1 (
+  echo Packaged jar is not executable. Rebuilding project...
+  mvn -DskipTests package
+  if errorlevel 1 (
+    echo Build failed. Please check the output above.
+    pause
+    exit /b 1
+  )
+)
+
 java -jar "%JAR_PATH%"
 pause

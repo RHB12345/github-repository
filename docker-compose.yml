@@ -1,0 +1,45 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      SPRING_PROFILES_ACTIVE: mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-campus_market}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-campus}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-campus_password}
+      CAMPUS_UPLOAD_DIR: /app/uploads
+      AI_CUSTOMER_API_URL: ${AI_CUSTOMER_API_URL:-}
+      AI_CUSTOMER_API_KEY: ${AI_CUSTOMER_API_KEY:-}
+      AI_CUSTOMER_MODEL: ${AI_CUSTOMER_MODEL:-deepseek-v4-flash}
+    volumes:
+      - campus_uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-campus_market}
+      MYSQL_USER: ${MYSQL_USER:-campus}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-campus_password}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - campus_mysql:/var/lib/mysql
+      - ./docs/schema-mysql.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  campus_mysql:
+  campus_uploads:

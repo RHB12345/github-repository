@@ -3,6 +3,9 @@ uploads/
 tools/apache-maven-*/
 tools/*.zip
 *.log
+.env
+.env.*
+!.env.example
 .idea/
 .vs/
 *.iml

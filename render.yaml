@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: campus-market-web
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: CAMPUS_UPLOAD_DIR
+        value: /app/uploads
